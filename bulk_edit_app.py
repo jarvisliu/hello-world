@@ -64,8 +64,13 @@ def apply_edits(image: Image.Image, options: EditOptions) -> Image.Image:
     if options.watermark:
         draw = ImageDraw.Draw(edited)
         width, height = edited.size
-        x = max(WATERMARK_PADDING, width - (len(options.watermark) * WATERMARK_ESTIMATED_CHAR_WIDTH) - WATERMARK_PADDING)
-        y = max(WATERMARK_PADDING, height - WATERMARK_TEXT_HEIGHT)
+        estimated_text_width = len(options.watermark) * WATERMARK_ESTIMATED_CHAR_WIDTH
+        bbox = draw.textbbox((0, 0), options.watermark)
+        measured_text_height = max(WATERMARK_TEXT_HEIGHT, bbox[3] - bbox[1])
+        text_width = max(estimated_text_width, bbox[2] - bbox[0])
+
+        x = max(0, width - text_width - WATERMARK_PADDING)
+        y = max(0, height - measured_text_height - WATERMARK_PADDING)
         draw.text((x, y), options.watermark, fill=(255, 255, 255))
     return edited
 
