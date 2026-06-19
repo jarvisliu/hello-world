@@ -16,6 +16,9 @@ OUTPUT_FORMATS = {
     "tiff": ("TIFF", ".tiff"),
 }
 DEFAULT_MAX_BATCH_SIZE = 1000
+WATERMARK_PADDING = 10
+WATERMARK_ESTIMATED_CHAR_WIDTH = 8
+WATERMARK_TEXT_HEIGHT = 20
 
 
 @dataclass
@@ -61,8 +64,8 @@ def apply_edits(image: Image.Image, options: EditOptions) -> Image.Image:
     if options.watermark:
         draw = ImageDraw.Draw(edited)
         width, height = edited.size
-        x = max(10, width - (len(options.watermark) * 8) - 10)
-        y = max(10, height - 20)
+        x = max(WATERMARK_PADDING, width - (len(options.watermark) * WATERMARK_ESTIMATED_CHAR_WIDTH) - WATERMARK_PADDING)
+        y = max(WATERMARK_PADDING, height - WATERMARK_TEXT_HEIGHT)
         draw.text((x, y), options.watermark, fill=(255, 255, 255))
     return edited
 
